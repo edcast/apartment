@@ -9,6 +9,7 @@ module Apartment
     # Migrate to latest
     def migrate(database)
       Tenant.switch(database) do
+        next if database.include?('replica')
         version = ENV['VERSION'] ? ENV['VERSION'].to_i : nil
 
         migration_scope_block = ->(migration) { ENV['SCOPE'].blank? || (ENV['SCOPE'] == migration.scope) }
@@ -24,6 +25,7 @@ module Apartment
     # Migrate up/down to a specific version
     def run(direction, database, version)
       Tenant.switch(database) do
+        next if database.include?('replica')
         if activerecord_below_5_2?
           ActiveRecord::Migrator.run(direction, ActiveRecord::Migrator.migrations_paths, version)
         else
@@ -35,6 +37,7 @@ module Apartment
     # rollback latest migration `step` number of times
     def rollback(database, step = 1)
       Tenant.switch(database) do
+        next if database.include?('replica')
         if activerecord_below_5_2?
           ActiveRecord::Migrator.rollback(ActiveRecord::Migrator.migrations_paths, step)
         else

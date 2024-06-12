@@ -54,10 +54,11 @@ module Apartment
       def connect_to_new(tenant)
         return reset if tenant.nil?
 
-        db_config = Apartment.db_config_for(tenant)[:url].to_s
-        if db_config.present? 
-          db_name = db_config.split('/').last
-        end
+        #db_config = Apartment.db_config_for(tenant)[:url].to_s
+        db_name = Apartment.db_config_for(tenant)[:db_name].to_s
+        # if db_config.present? 
+        #   db_name = db_config.split('/').last
+        # end
         if db_name.present? && db_name != tenant
           tenant = db_name
         end
